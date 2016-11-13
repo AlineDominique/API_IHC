@@ -1,26 +1,58 @@
 <?php
-function ListaProfessores($id){
+function ListaAulas($id){
 	include("conectar.php");
 	
 	$resposta = array();
 	$id = mysqli_real_escape_string($conexao,$id);
 	
-	//Consulta Professores no banco
+	//Consulta Aula no banco
 	if($id == 0){
-		$query = mysqli_query($conexao,"SELECT idProfessor, Nome FROM Professor") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT idProfessor, Nome FROM Professor WHERE idProfessor = " .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE idAula = " .$id) or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
 	{
-		$resposta[] = array('idProfessor' => $dados['idProfessor'],
-							'Nome' => utf8_encode($dados['Nome'])); //tira encode quando for publicar no host
+		$resposta[] = array('idAula' => $dados['idAula'],
+							'Data' => $dados['Data'],
+							'HoraInicio' => $dados['HoraInicio'],
+							'HoraFim' => $dados['HoraFim'],
+							'Semestre' => $dados['Semestre'],
+							'Disciplina' => $dados['Disciplina'],
+							'Professor' => $dados['Professor'],
+							'Sala' => $dados['Sala']); 
 	}
 	return $resposta;
 }
-
-function InsereProfessor(){
+function ListaAulasPorSala($NRO){
+	include("conectar.php");
+	
+	$resposta = array();
+	$NRO = mysqli_real_escape_string($conexao,$NRO);
+	
+	//Consulta Aula no banco
+	if($NRO == 0){
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE d.Numero = ".$NRO) or die(mysqli_error($conexao));
+	}else{
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE d.Numero = " .$NRO) or die(mysqli_error($conexao));
+	}
+	//faz um looping e cria um array com os campos da consulta
+	while($dados = mysqli_fetch_array($query))
+	{
+		$resposta[] = array('idAula' => $dados['idAula'],
+							'Data' => $dados['Data'],
+							'HoraInicio' => $dados['HoraInicio'],
+							'HoraFim' => $dados['HoraFim'],
+							'Semestre' => $dados['Semestre'],
+							'Disciplina' => $dados['Disciplina'],
+							'Professor' => $dados['Professor'],
+							'Sala' => $dados['Sala']); 
+	}
+	return $resposta;
+}
+// Modificar Código das funções
+function InsereAula(){
 	
 	//Recupera conteudo recebido na request
 	$conteudo = file_get_contents("php://input");
@@ -44,22 +76,22 @@ function InsereProfessor(){
 			//Evita SQL injection
 			$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 					
-			//Recupera idProfessor para incrementar 1
-			$idProfessor = 1;
-			$query = mysqli_query($conexao, "SELECT idProfessor FROM Professor ORDER BY idProfessor DESC LIMIT 1") or die(mysqli_error($conexao));
+			//Recupera idDisciplina para incrementar 1
+			$idDisciplina = 0;
+			$query = mysqli_query($conexao, "SELECT idDisciplina FROM Disciplina ORDER BY idDisciplina DESC LIMIT 1") or die(mysqli_error($conexao));
 			while($dados = mysqli_fetch_array($query)){
-				$idProfessor = $dados["idProfessor"];
+				$idDisciplina = $dados["idDisciplina"];
 			}
-			$idProfessor++;
+			$idDisciplina++;
 			
-			//Insere Professor
-			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .$Nome ."')") or die(mysqli_error($conexao));
+			//Insere Disciplina
+			$query = mysqli_query($conexao,"INSERT INTO Disciplina VALUES(" .$idDisciplina .",'" .utf8_decode($Nome) ."')") or die(mysqli_error($conexao)); // retirar decode quando publicar no host
 			$resposta = mensagens(4);
 		}
 	}
 	return $resposta;
 }
-function AtualizaAnimal($id){
+function AtualizaAula($id){
 	
 	//Recupera conteudo recebido na request
 	$conteudo = file_get_contents("php://input");
@@ -89,7 +121,7 @@ function AtualizaAnimal($id){
 				//Evita SQL injection
 				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 						
-				$update = "UPDATE Professor SET Nome = '" .$Nome ."'";
+				$update = "UPDATE Disciplina SET Nome = '" .utf8_decode($Nome) ."' WHERE idDisciplina = ".$id;
 								
 				
 				//Atualiza Professor no banco
@@ -100,7 +132,7 @@ function AtualizaAnimal($id){
 	}
 	return $resposta;
 }
-function ExcluiProfessor($id){
+function ExcluiAula($id){
 	
 	//Recupera conteudo recebido na request
 	$resposta = array();
@@ -115,7 +147,7 @@ function ExcluiProfessor($id){
 		$id = mysqli_real_escape_string($conexao,$id);
 		
 		//Exclui Professor
-		$query = mysqli_query($conexao, "DELETE FROM Professor WHERE idProfessor=" .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao, "DELETE FROM Disciplina WHERE idDisciplina=" .$id) or die(mysqli_error($conexao));
 		
 		$resposta = mensagens(7);
 	}

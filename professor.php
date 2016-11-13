@@ -45,7 +45,7 @@ function InsereProfessor(){
 			$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 					
 			//Recupera idProfessor para incrementar 1
-			$idProfessor = 1;
+			$idProfessor = 0;
 			$query = mysqli_query($conexao, "SELECT idProfessor FROM Professor ORDER BY idProfessor DESC LIMIT 1") or die(mysqli_error($conexao));
 			while($dados = mysqli_fetch_array($query)){
 				$idProfessor = $dados["idProfessor"];
@@ -53,13 +53,13 @@ function InsereProfessor(){
 			$idProfessor++;
 			
 			//Insere Professor
-			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .$Nome ."')") or die(mysqli_error($conexao));
+			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .utf8_decode($Nome) ."')") or die(mysqli_error($conexao));
 			$resposta = mensagens(4);
 		}
 	}
 	return $resposta;
 }
-function AtualizaAnimal($id){
+function AtualizaProfessor($id){
 	
 	//Recupera conteudo recebido na request
 	$conteudo = file_get_contents("php://input");
@@ -89,7 +89,7 @@ function AtualizaAnimal($id){
 				//Evita SQL injection
 				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 						
-				$update = "UPDATE Professor SET Nome = '" .$Nome ."'";
+				$update = "UPDATE Professor SET Nome = '" .utf8_decode($Nome) ."' WHERE idProfessor = ".$id;
 								
 				
 				//Atualiza Professor no banco

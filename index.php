@@ -2,6 +2,9 @@
 	//Inclui arquivos com as funções da API.
 	include('mensagem.php');
 	include('professor.php');
+	include('disciplina.php');
+	include('sala.php');
+	include('aula.php');
 	
     //Recupera os valores da URL
 	$metodo = $_SERVER['REQUEST_METHOD'];

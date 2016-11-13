@@ -1,26 +1,26 @@
 <?php
-function ListaProfessores($id){
+function ListaSalas($id){
 	include("conectar.php");
 	
 	$resposta = array();
 	$id = mysqli_real_escape_string($conexao,$id);
 	
-	//Consulta Professores no banco
+	//Consulta Sala no banco
 	if($id == 0){
-		$query = mysqli_query($conexao,"SELECT idProfessor, Nome FROM Professor") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT idProfessor, Nome FROM Professor WHERE idProfessor = " .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala  WHERE idSala = " .$id) or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
 	{
-		$resposta[] = array('idProfessor' => $dados['idProfessor'],
-							'Nome' => utf8_encode($dados['Nome'])); //tira encode quando for publicar no host
+		$resposta[] = array('idSala' => $dados['idSala'],
+							'Numero' => $dados['Numero']); 
 	}
 	return $resposta;
 }
 
-function InsereProfessor(){
+function InsereSala(){
 	
 	//Recupera conteudo recebido na request
 	$conteudo = file_get_contents("php://input");
@@ -34,7 +34,7 @@ function InsereProfessor(){
 		$dados = json_decode($conteudo,true);
 		
 		//Verifica se as infromações esperadas foram recebidas
-		if(!isset($dados["Nome"]))
+		if(!isset($dados["Numero"]))
 		{
 			$resposta = mensagens(3);
 		}
@@ -42,24 +42,24 @@ function InsereProfessor(){
 			include("conectar.php");
 			
 			//Evita SQL injection
-			$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
+			$Numero = mysqli_real_escape_string($conexao,$dados["Numero"]);
 					
-			//Recupera idProfessor para incrementar 1
-			$idProfessor = 1;
-			$query = mysqli_query($conexao, "SELECT idProfessor FROM Professor ORDER BY idProfessor DESC LIMIT 1") or die(mysqli_error($conexao));
+			//Recupera idSala para incrementar 1
+			$idSala = 0;
+			$query = mysqli_query($conexao, "SELECT idSala FROM Sala ORDER BY idSala DESC LIMIT 1") or die(mysqli_error($conexao));
 			while($dados = mysqli_fetch_array($query)){
-				$idProfessor = $dados["idProfessor"];
+				$idSala = $dados["idSala"];
 			}
-			$idProfessor++;
+			$idSala++;
 			
-			//Insere Professor
-			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .$Nome ."')") or die(mysqli_error($conexao));
+			//Insere Sala
+			$query = mysqli_query($conexao,"INSERT INTO Sala VALUES(" .$idSala ."," .$Numero .")") or die(mysqli_error($conexao)); 
 			$resposta = mensagens(4);
 		}
 	}
 	return $resposta;
 }
-function AtualizaAnimal($id){
+function AtualizaSala($id){
 	
 	//Recupera conteudo recebido na request
 	$conteudo = file_get_contents("php://input");
@@ -78,7 +78,7 @@ function AtualizaAnimal($id){
 			$dados = json_decode($conteudo,true);
 			
 			//Verifica se as infromações esperadas foram recebidas
-			if(!isset($dados["Nome"]))
+			if(!isset($dados["Numero"]))
 			{
 				$resposta = mensagens(3);
 			}
@@ -87,9 +87,9 @@ function AtualizaAnimal($id){
 				include("conectar.php");
 				
 				//Evita SQL injection
-				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
+				$Numero = mysqli_real_escape_string($conexao,$dados["Numero"]);
 						
-				$update = "UPDATE Professor SET Nome = '" .$Nome ."'";
+				$update = "UPDATE Sala SET Numero = " .$Numero ." WHERE idSala = ".$id;
 								
 				
 				//Atualiza Professor no banco
@@ -100,7 +100,7 @@ function AtualizaAnimal($id){
 	}
 	return $resposta;
 }
-function ExcluiProfessor($id){
+function ExcluiSala($id){
 	
 	//Recupera conteudo recebido na request
 	$resposta = array();
@@ -114,8 +114,8 @@ function ExcluiProfessor($id){
 		//Evita SQL injection		
 		$id = mysqli_real_escape_string($conexao,$id);
 		
-		//Exclui Professor
-		$query = mysqli_query($conexao, "DELETE FROM Professor WHERE idProfessor=" .$id) or die(mysqli_error($conexao));
+		//Exclui Sala
+		$query = mysqli_query($conexao, "DELETE FROM Sala WHERE idSala=" .$id) or die(mysqli_error($conexao));
 		
 		$resposta = mensagens(7);
 	}
