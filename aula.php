@@ -51,7 +51,7 @@ function ListaAulasPorSala($NRO){
 	}
 	return $resposta;
 }
-// Modificar Código das funções
+// Testar Código
 function InsereAula(){
 	
 	//Recupera conteudo recebido na request
@@ -66,7 +66,7 @@ function InsereAula(){
 		$dados = json_decode($conteudo,true);
 		
 		//Verifica se as infromações esperadas foram recebidas
-		if(!isset($dados["Nome"]))
+		if(!isset($dados["Data"])||($dados["HoraInicio"])|| ($dados["HoraFim"])||($dados["Semestre"])||($dados["idDisciplina"]||($dados["idProfessor"])||($dados["idSala"])))
 		{
 			$resposta = mensagens(3);
 		}
@@ -74,18 +74,24 @@ function InsereAula(){
 			include("conectar.php");
 			
 			//Evita SQL injection
-			$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
+			$Data = mysqli_real_escape_string($conexao,$dados["Data"]);
+			$HoraInicio = mysqli_real_escape_string($conexao,$dados["HoraInicio"]);
+			$HoraFim = mysqli_real_escape_string($conexao,$dados["HoraFim"]);
+			$Semestre = mysqli_real_escape_string($conexao,$dados["Semestre"]);
+			$idDisciplina = mysqli_real_escape_string($conexao,$dados["idDisciplina"]);
+			$idProfessor = mysqli_real_escape_string($conexao,$dados["idProfessor"]);
+			$idSala = mysqli_real_escape_string($conexao,$dados["idSala"]);
 					
-			//Recupera idDisciplina para incrementar 1
-			$idDisciplina = 0;
-			$query = mysqli_query($conexao, "SELECT idDisciplina FROM Disciplina ORDER BY idDisciplina DESC LIMIT 1") or die(mysqli_error($conexao));
+			//Recupera idAula para incrementar 1
+			$idAula = 0;
+			$query = mysqli_query($conexao, "SELECT idAula FROM Aula ORDER BY idAula DESC LIMIT 1") or die(mysqli_error($conexao));
 			while($dados = mysqli_fetch_array($query)){
-				$idDisciplina = $dados["idDisciplina"];
+				$idAula = $dados["idAula"];
 			}
-			$idDisciplina++;
+			$idAula++;
 			
-			//Insere Disciplina
-			$query = mysqli_query($conexao,"INSERT INTO Disciplina VALUES(" .$idDisciplina .",'" .utf8_decode($Nome) ."')") or die(mysqli_error($conexao)); // retirar decode quando publicar no host
+			//Insere Aula
+			$query = mysqli_query($conexao,"INSERT INTO Aula VALUES(" .$idAula .",'" .$Data ."','" .$HoraInicio ."','" .$HoraFim ."'," .$Semestre ."," .$idDisciplina ."," .$idProfessor ."," .$idSala .")") or die(mysqli_error($conexao)); // retirar decode quando publicar no host
 			$resposta = mensagens(4);
 		}
 	}
@@ -109,8 +115,8 @@ function AtualizaAula($id){
 			//Converte o json recebido pra array
 			$dados = json_decode($conteudo,true);
 			
-			//Verifica se as infromações esperadas foram recebidas
-			if(!isset($dados["Nome"]))
+			//Verifica se as informações esperadas foram recebidas
+			if(!isset($dados["Data"])||($dados["HoraInicio"])|| ($dados["HoraFim"])||($dados["Semestre"])||($dados["idDisciplina"]||($dados["idProfessor"])||($dados["idSala"])))
 			{
 				$resposta = mensagens(3);
 			}
@@ -119,12 +125,18 @@ function AtualizaAula($id){
 				include("conectar.php");
 				
 				//Evita SQL injection
-				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
-						
-				$update = "UPDATE Disciplina SET Nome = '" .utf8_decode($Nome) ."' WHERE idDisciplina = ".$id;
+				$Data = mysqli_real_escape_string($conexao,$dados["Data"]);
+				$HoraInicio = mysqli_real_escape_string($conexao,$dados["HoraInicio"]);
+				$HoraFim = mysqli_real_escape_string($conexao,$dados["HoraFim"]);
+				$Semestre = mysqli_real_escape_string($conexao,$dados["Semestre"]);
+				$idDisciplina = mysqli_real_escape_string($conexao,$dados["idDisciplina"]);
+				$idProfessor = mysqli_real_escape_string($conexao,$dados["idProfessor"]);
+				$idSala = mysqli_real_escape_string($conexao,$dados["idSala"]);
+							
+				$update = "UPDATE Aula SET Data = '" .$Data ."', HoraInicio = '" .$HoraInicio ."', HoraFim = '" .$HoraFim ."', Semestre = " .$Semestre .", idDisciplina = " .$idDisciplina .", idProfessor = " .$idProfessor .", idSala = " .$idDisciplina ." WHERE idAula = ".$id;
 								
 				
-				//Atualiza Professor no banco
+				//Atualiza Aula no banco
 				$query = mysqli_query($conexao, $update) or die(mysqli_error($conexao));
 				$resposta = mensagens(6);
 			}
@@ -145,9 +157,9 @@ function ExcluiAula($id){
 		
 		//Evita SQL injection		
 		$id = mysqli_real_escape_string($conexao,$id);
-		
+				
 		//Exclui Professor
-		$query = mysqli_query($conexao, "DELETE FROM Disciplina WHERE idDisciplina=" .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao, "DELETE FROM Aula WHERE idAula=" .$id) or die(mysqli_error($conexao));
 		
 		$resposta = mensagens(7);
 	}
