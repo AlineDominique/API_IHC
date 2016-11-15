@@ -52,6 +52,7 @@ function ListaAulasPorSala($NRO){
 	return $resposta;
 }
 // Testar Código
+
 function InsereAula(){
 	
 	//Recupera conteudo recebido na request
