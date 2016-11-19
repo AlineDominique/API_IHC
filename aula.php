@@ -7,20 +7,20 @@ function ListaAulas($id){
 	
 	//Consulta Aula no banco
 	if($id == 0){
-		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala ORDER BY a.idAula ASC") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE idAula = " .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE a.idAula = " .$id ." ORDER BY a.idAula ASC") or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idAula' => $dados['idAula'],
-							'Data' => $dados['Data'],
+							'Data' => utf8_encode($dados['Data']),
 							'HoraInicio' => $dados['HoraInicio'],
 							'HoraFim' => $dados['HoraFim'],
 							'Semestre' => $dados['Semestre'],
-							'Disciplina' => $dados['Disciplina'],
-							'Professor' => $dados['Professor'],
+							'Disciplina' => utf8_encode($dados['Disciplina']),
+							'Professor' => utf8_encode($dados['Professor']),
 							'Sala' => $dados['Sala']); 
 	}
 	return $resposta;
@@ -33,21 +33,21 @@ function ListaAulasPorSala($NRO){
 	
 	//Consulta Aula no banco
 	if($NRO == 0){
-		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE d.Numero = ".$NRO) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala ORDER BY a.idAula ASC") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE d.Numero = " .$NRO) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Data, a.HoraInicio, a.HoraFim, a.Semestre, b.Nome as 'Disciplina', c.Nome as 'Professor', d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE d.Numero = " .$NRO . " ORDER BY a.idAula ASC") or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idAula' => $dados['idAula'],
-							'Data' => $dados['Data'],
+							'Data' => utf8_encode($dados['Data']),
 							'HoraInicio' => $dados['HoraInicio'],
 							'HoraFim' => $dados['HoraFim'],
 							'Semestre' => $dados['Semestre'],
-							'Disciplina' => $dados['Disciplina'],
-							'Professor' => $dados['Professor'],
-							'Sala' => $dados['Sala']); 
+							'Disciplina' => utf8_encode($dados['Disciplina']),
+							'Professor' => utf8_encode($dados['Professor']),
+							'Sala' => $dados['Sala']);
 	}
 	return $resposta;
 }
@@ -67,7 +67,9 @@ function InsereAula(){
 		$dados = json_decode($conteudo,true);
 		
 		//Verifica se as infromações esperadas foram recebidas
-		if(!isset($dados["Data"])||($dados["HoraInicio"])|| ($dados["HoraFim"])||($dados["Semestre"])||($dados["idDisciplina"]||($dados["idProfessor"])||($dados["idSala"])))
+		if(!isset($dados["Data"]) || !isset($dados["HoraInicio"]) || !isset($dados["HoraFim"]) ||
+			!isset($dados["Semestre"]) || !isset($dados["idDisciplina"]) || !isset($dados["idProfessor"]) ||
+			!isset($dados["idSala"]))
 		{
 			$resposta = mensagens(3);
 		}
@@ -117,7 +119,9 @@ function AtualizaAula($id){
 			$dados = json_decode($conteudo,true);
 			
 			//Verifica se as informações esperadas foram recebidas
-			if(!isset($dados["Data"])||($dados["HoraInicio"])|| ($dados["HoraFim"])||($dados["Semestre"])||($dados["idDisciplina"]||($dados["idProfessor"])||($dados["idSala"])))
+			if(!isset($dados["Data"]) || !isset($dados["HoraInicio"]) || !isset($dados["HoraFim"]) ||
+				!isset($dados["Semestre"]) || !isset($dados["idDisciplina"]) || !isset($dados["idProfessor"]) ||
+				!isset($dados["idSala"]))
 			{
 				$resposta = mensagens(3);
 			}
@@ -134,7 +138,7 @@ function AtualizaAula($id){
 				$idProfessor = mysqli_real_escape_string($conexao,$dados["idProfessor"]);
 				$idSala = mysqli_real_escape_string($conexao,$dados["idSala"]);
 							
-				$update = "UPDATE Aula SET Data = '" .$Data ."', HoraInicio = '" .$HoraInicio ."', HoraFim = '" .$HoraFim ."', Semestre = " .$Semestre .", idDisciplina = " .$idDisciplina .", idProfessor = " .$idProfessor .", idSala = " .$idDisciplina ." WHERE idAula = ".$id;
+				$update = "UPDATE Aula SET Data = '" .$Data ."', HoraInicio = '" .$HoraInicio ."', HoraFim = '" .$HoraFim ."', Semestre = " .$Semestre .", idDisciplina = " .$idDisciplina .", idProfessor = " .$idProfessor .", idSala = " .$idSala ." WHERE idAula = ".$id;
 								
 				
 				//Atualiza Aula no banco

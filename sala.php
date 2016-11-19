@@ -7,9 +7,9 @@ function ListaSalas($id){
 	
 	//Consulta Sala no banco
 	if($id == 0){
-		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala ORDER BY idSala ASC") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala  WHERE idSala = " .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idSala, Numero FROM Sala  WHERE idSala = " .$id . " ORDER BY idSala ASC") or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))

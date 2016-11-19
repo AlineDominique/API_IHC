@@ -7,9 +7,9 @@ function ListaDisciplinas($id){
 	
 	//Consulta Disciplina no banco
 	if($id == 0){
-		$query = mysqli_query($conexao,"SELECT idDisciplina, Nome FROM Disciplina") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idDisciplina, Nome FROM Disciplina ORDER BY idDisciplina ASC") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT idDisciplina, Nome FROM Disciplina WHERE idProfessor = " .$id) or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT idDisciplina, Nome FROM Disciplina WHERE idProfessor = " .$id . " ORDER BY idDisciplina ASC") or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
