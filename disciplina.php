@@ -15,7 +15,7 @@ function ListaDisciplinas($id){
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idDisciplina' => $dados['idDisciplina'],
-							'Nome' => utf8_encode($dados['Nome'])); //tira encode quando for publicar no host
+							'Nome' => $dados['Nome']); 
 	}
 	return $resposta;
 }
@@ -53,7 +53,7 @@ function InsereDisciplina(){
 			$idDisciplina++;
 			
 			//Insere Disciplina
-			$query = mysqli_query($conexao,"INSERT INTO Disciplina VALUES(" .$idDisciplina .",'" .utf8_decode($Nome) ."')") or die(mysqli_error($conexao)); // retirar decode quando publicar no host
+			$query = mysqli_query($conexao,"INSERT INTO Disciplina VALUES(" .$idDisciplina .",'" .$Nome ."')") or die(mysqli_error($conexao));
 			$resposta = mensagens(4);
 		}
 	}
@@ -89,7 +89,7 @@ function AtualizaDisciplina($id){
 				//Evita SQL injection
 				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 						
-				$update = "UPDATE Disciplina SET Nome = '" .utf8_decode($Nome) ."' WHERE idDisciplina = ".$id;
+				$update = "UPDATE Disciplina SET Nome = '" .$Nome ."' WHERE idDisciplina = ".$id;
 								
 				
 				//Atualiza Professor no banco

@@ -15,12 +15,12 @@ function ListaAulas($id){
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idAula' => $dados['idAula'],
-							'Data' => utf8_encode($dados['Data']),
+							'Data' => $dados['Data'],
 							'HoraInicio' => $dados['HoraInicio'],
 							'HoraFim' => $dados['HoraFim'],
 							'Semestre' => $dados['Semestre'],
-							'Disciplina' => utf8_encode($dados['Disciplina']),
-							'Professor' => utf8_encode($dados['Professor']),
+							'Disciplina' => $dados['Disciplina'],
+							'Professor' => $dados['Professor'],
 							'Sala' => $dados['Sala']); 
 	}
 	return $resposta;
@@ -41,12 +41,12 @@ function ListaAulasPorSala($NRO){
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idAula' => $dados['idAula'],
-							'Data' => utf8_encode($dados['Data']),
+							'Data' => $dados['Data'],
 							'HoraInicio' => $dados['HoraInicio'],
 							'HoraFim' => $dados['HoraFim'],
 							'Semestre' => $dados['Semestre'],
-							'Disciplina' => utf8_encode($dados['Disciplina']),
-							'Professor' => utf8_encode($dados['Professor']),
+							'Disciplina' => $dados['Disciplina'],
+							'Professor' => $dados['Professor'],
 							'Sala' => $dados['Sala']);
 	}
 	return $resposta;
@@ -94,7 +94,7 @@ function InsereAula(){
 			$idAula++;
 			
 			//Insere Aula
-			$query = mysqli_query($conexao,"INSERT INTO Aula VALUES(" .$idAula .",'" .$Data ."','" .$HoraInicio ."','" .$HoraFim ."'," .$Semestre ."," .$idDisciplina ."," .$idProfessor ."," .$idSala .")") or die(mysqli_error($conexao)); // retirar decode quando publicar no host
+			$query = mysqli_query($conexao,"INSERT INTO Aula VALUES(" .$idAula .",'" .$Data ."','" .$HoraInicio ."','" .$HoraFim ."'," .$Semestre ."," .$idDisciplina ."," .$idProfessor ."," .$idSala .")") or die(mysqli_error($conexao)); 
 			$resposta = mensagens(4);
 		}
 	}
@@ -139,8 +139,7 @@ function AtualizaAula($id){
 				$idSala = mysqli_real_escape_string($conexao,$dados["idSala"]);
 							
 				$update = "UPDATE Aula SET Data = '" .$Data ."', HoraInicio = '" .$HoraInicio ."', HoraFim = '" .$HoraFim ."', Semestre = " .$Semestre .", idDisciplina = " .$idDisciplina .", idProfessor = " .$idProfessor .", idSala = " .$idSala ." WHERE idAula = ".$id;
-								
-				
+							
 				//Atualiza Aula no banco
 				$query = mysqli_query($conexao, $update) or die(mysqli_error($conexao));
 				$resposta = mensagens(6);

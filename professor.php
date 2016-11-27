@@ -15,7 +15,7 @@ function ListaProfessores($id){
 	while($dados = mysqli_fetch_array($query))
 	{
 		$resposta[] = array('idProfessor' => $dados['idProfessor'],
-							'Nome' => utf8_encode($dados['Nome'])); //tira encode quando for publicar no host
+							'Nome' => $dados['Nome']); 
 	}
 	return $resposta;
 }
@@ -53,7 +53,7 @@ function InsereProfessor(){
 			$idProfessor++;
 			
 			//Insere Professor
-			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .utf8_decode($Nome) ."')") or die(mysqli_error($conexao));
+			$query = mysqli_query($conexao,"INSERT INTO Professor VALUES(" .$idProfessor .",'" .$Nome ."')") or die(mysqli_error($conexao));
 			$resposta = mensagens(4);
 		}
 	}
@@ -89,7 +89,7 @@ function AtualizaProfessor($id){
 				//Evita SQL injection
 				$Nome = mysqli_real_escape_string($conexao,$dados["Nome"]);
 						
-				$update = "UPDATE Professor SET Nome = '" .utf8_decode($Nome) ."' WHERE idProfessor = ".$id;
+				$update = "UPDATE Professor SET Nome = '" .$Nome ."' WHERE idProfessor = ".$id;
 								
 				
 				//Atualiza Professor no banco
