@@ -53,7 +53,7 @@ function InsereSala(){
 			$idSala++;
 			
 			//Insere Sala
-			$query = mysqli_query($conexao,"INSERT INTO Sala VALUES(" .$idSala ."," .$Numero .")") or die(mysqli_error($conexao)); 
+			$query = mysqli_query($conexao,"INSERT INTO Sala VALUES(" .$idSala .",'" .$Numero ."')") or die(mysqli_error($conexao)); 
 			$resposta = mensagens(4);
 		}
 	}
@@ -89,7 +89,7 @@ function AtualizaSala($id){
 				//Evita SQL injection
 				$Numero = mysqli_real_escape_string($conexao,$dados["Numero"]);
 						
-				$update = "UPDATE Sala SET Numero = " .$Numero ." WHERE idSala = ".$id;
+				$update = "UPDATE Sala SET Numero = '" .$Numero ."' WHERE idSala = ".$id;
 								
 				
 				//Atualiza Professor no banco
