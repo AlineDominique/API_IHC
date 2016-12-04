@@ -9,7 +9,7 @@ function ListaAulasPorProfessor($id){
 	if($id == 0){
 		$query = mysqli_query($conexao,"SELECT a.idAula, a.Dia, a.HoraInicio, a.HoraFim, a.Semestre, b.idDisciplina, b.Nome as 'Disciplina', c.idProfessor, c.Nome as 'Professor', d.idSala, d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala ORDER BY a.Dia ASC") or die(mysqli_error($conexao));
 	}else{
-		$query = mysqli_query($conexao,"SELECT a.idAula, a.Dia, a.HoraInicio, a.HoraFim, a.Semestre, b.idDisciplina, b.Nome as 'Disciplina', c.idProfessor, c.Nome as 'Professor', d.idSala, d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE c.idProfessor = " .$id ." ORDER BY a.Dia ASC") or die(mysqli_error($conexao));
+		$query = mysqli_query($conexao,"SELECT a.idAula, a.Dia, a.HoraInicio, a.HoraFim, a.Semestre, b.idDisciplina, b.Nome as 'Disciplina', c.idProfessor, c.Nome as 'Professor', d.idSala, d.Numero as 'Sala' FROM Aula as a INNER JOIN Disciplina as b on a.idDisciplina = b.idDisciplina INNER JOIN Professor as c on a.idProfessor = c.idProfessor INNER JOIN Sala as d on a.idSala = d.idSala WHERE Professor = '" .$id ."' ORDER BY a.Dia ASC") or die(mysqli_error($conexao));
 	}
 	//faz um looping e cria um array com os campos da consulta
 	while($dados = mysqli_fetch_array($query))
